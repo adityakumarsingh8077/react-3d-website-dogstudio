@@ -1,9 +1,9 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import * as THREE from 'three'
 
 import { Canvas, useThree } from '@react-three/fiber'
-import { OrbitControls , useGLTF,useTexture} from '@react-three/drei'
-import { color } from 'three/tsl';
+import { OrbitControls , useGLTF,useTexture,useAnimations} from '@react-three/drei'
+// import { color } from 'three/tsl';
 
 const Dog=() =>{
   const model =useGLTF("/models/dog.drc.glb");
@@ -12,6 +12,11 @@ const Dog=() =>{
   
   })
   
+  const { actions } = useAnimations(model.animations, model.scene)
+
+useEffect(() => {
+  actions["Take 001"].play()
+}, [actions])
 
   // const textures =useTexture({
   //   normalMap:"/dog_normals.jpg",
@@ -43,12 +48,21 @@ const Dog=() =>{
   return texture
 })
 
+// model.scene.traverse((child) => {
+//   if (child.name.includes("DOG")) {
+//     child.material = new THREE.MeshMatcapMaterial({
+//       normalMap: normalMap,
+//       matcap: sampleMatCap
+//     })
+//   }
+// })
+const dogMaterial = new THREE.MeshMatcapMaterial({
+  normalMap: normalMap,
+  matcap: sampleMatCap
+})
 model.scene.traverse((child) => {
   if (child.name.includes("DOG")) {
-    child.material = new THREE.MeshMatcapMaterial({
-      normalMap: normalMap,
-      matcap: sampleMatCap
-    })
+    child.material = dogMaterial
   }
 })
 
